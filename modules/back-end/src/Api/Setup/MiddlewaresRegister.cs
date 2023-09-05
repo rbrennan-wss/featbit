@@ -1,8 +1,11 @@
 using Api.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Net.Http.Headers;
 using Serilog;
 using Serilog.Events;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Net;
+using System.Reflection.PortableExecutable;
 using OpenApiConstants = Api.Authentication.OpenApiConstants;
 
 namespace Api.Setup;
@@ -80,6 +83,8 @@ public static class MiddlewaresRegister
         // authentication & authorization
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseVerifyAccountCreation();
+        
 
         app.MapControllers();
 

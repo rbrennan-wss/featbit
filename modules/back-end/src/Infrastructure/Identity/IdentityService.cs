@@ -94,4 +94,18 @@ public class IdentityService : IIdentityService
         var token = IssueToken(user);
         return RegisterResult.Ok(user.Id, token);
     }
+
+    public async Task<bool> RegisterUserIfDoesNotExist(string email)
+    {
+        var existingUser = await _store.FindOneAsync(x => x.Email == email);
+        if (existingUser == null && email != null)
+        {
+            var hashedPwd = _passwordHasher.HashPassword(null!, PasswordGenerator.New(email));
+            var user = new User(email, hashedPwd);
+
+            await _store.AddAsync(user);
+            return true;
+        }
+        return false;
+    }
 }
