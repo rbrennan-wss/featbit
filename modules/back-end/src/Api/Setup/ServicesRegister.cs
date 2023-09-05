@@ -72,7 +72,7 @@ public static class ServicesRegister
             {
                 options.ForwardDefaultSelector = context =>
                 {
-                    //if (Convert.ToBoolean(builder.Configuration["externalAuth"]))
+                    //if (Convert.ToBoolean(builder.Configuration["ExternalAuth:Enabled"]))
                     //{
                     //    return Schemes.External;
                     //}
