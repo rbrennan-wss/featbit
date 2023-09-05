@@ -22,6 +22,7 @@ namespace Api.Middlewares
             if (Convert.ToBoolean(configuration["ExternalAuth:Enabled"])
                 && !string.IsNullOrEmpty(httpContext.Request.Headers[HeaderNames.Authorization]))
             {
+                // TODO: Update claim to correct value
                 identityService.RegisterUserIfDoesNotExist(httpContext.User.Claims.FirstOrDefault(c => c.Value == "email")?.Value);
             }
 
