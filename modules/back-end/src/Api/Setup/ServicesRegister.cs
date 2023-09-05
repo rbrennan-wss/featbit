@@ -74,7 +74,7 @@ public static class ServicesRegister
                 {
                     //if (Convert.ToBoolean(builder.Configuration["externalAuth"]))
                     //{
-                    //    return "external";
+                    //    return Schemes.External;
                     //}
                     string authorization = context.Request.Headers[HeaderNames.Authorization];
                     if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
@@ -100,7 +100,7 @@ public static class ServicesRegister
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOption["Key"]))
                 };
-            }).AddJwtBearer("external", o =>
+            }).AddJwtBearer(Schemes.External, o =>
             {
                 o.MetadataAddress = $"{builder.Configuration["ExternalAuth:Authority"]}/.well-known/openid-configuration";
                 o.Authority = builder.Configuration["ExternalAuth:Authority"];

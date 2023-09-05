@@ -9,4 +9,6 @@ public static class Schemes
     public const string JwtBearer = JwtBearerDefaults.AuthenticationScheme;
 
     public const string OpenApi = nameof(OpenApi);
+
+    public const string External = "External";
 }
