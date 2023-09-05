@@ -72,10 +72,10 @@ public static class ServicesRegister
             {
                 options.ForwardDefaultSelector = context =>
                 {
-                    //if (Convert.ToBoolean(builder.Configuration["ExternalAuth:Enabled"]))
-                    //{
-                    //    return Schemes.External;
-                    //}
+                    if (Convert.ToBoolean(builder.Configuration["ExternalAuth:Enabled"]))
+                    {
+                        return Schemes.External;
+                    }
                     string authorization = context.Request.Headers[HeaderNames.Authorization];
                     if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
                     {
