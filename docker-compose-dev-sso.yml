@@ -12,7 +12,7 @@ services:
       - DEMO_URL=https://demo.featbit.example
       - EVALUATION_URL=https://eval.featbit.example
     depends_on:
-      - api-server
+      # - api-server
       - demo-dino-game-vue
       - evaluation-server      
     ports:
@@ -20,20 +20,20 @@ services:
     networks:
       - featbit-network
 
-  api-server:
-    image: featbit/api:dev
-    container_name: api
-    build:
-      context: ./modules/back-end
-      dockerfile: ./deploy/Dockerfile
-    depends_on:
-      - mongodb
-      - redis
-      - da-server
-    ports:
-      - "5000:5000"
-    networks:
-      - featbit-network
+  # api-server:
+  #   image: featbit/api:dev
+  #   container_name: api
+  #   build:
+  #     context: ./modules/back-end
+  #     dockerfile: ./deploy/Dockerfile
+  #   depends_on:
+  #     - mongodb
+  #     - redis
+  #     - da-server
+  #   ports:
+  #     - "5000:5000"
+  #   networks:
+  #     - featbit-network
 
   evaluation-server:
     image: featbit/evaluation-server:dev
@@ -148,23 +148,23 @@ services:
     volumes:
       - ./infra/postgresql/data:/bitnami/postgresql
 
-  ca:
-    image: smallstep/step-ca:0.24.2
-    container_name: step-ca
-    restart: unless-stopped
-    ports:
-      - 9000:9000
-    networks:
-      - featbit-network
-    environment:
-     - DOCKER_STEPCA_INIT_NAME=featbit-dev-ca
-     - DOCKER_STEPCA_INIT_DNS_NAMES=localhost, ca.featbit.example, $(hostname -f)
-     - DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT=true
-     - DOCKER_STEPCA_INIT_PASSWORD=supersecret123
-     - DEFAULT_CERT_VALIDITY=${DEFAULT_CERT_VALIDITY:-720h}
-     - MAX_CERT_VALIDITY=${MAX_CERT_VALIDITY:-2160h}
-    volumes:
-      - ./infra/step-ca/data:/home/step
+  # ca:
+  #   image: smallstep/step-ca:0.24.2
+  #   container_name: step-ca
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9000:9000
+  #   networks:
+  #     - featbit-network
+  #   environment:
+  #    - DOCKER_STEPCA_INIT_NAME=featbit-dev-ca
+  #    - DOCKER_STEPCA_INIT_DNS_NAMES=localhost, ca.featbit.example, $(hostname -f)
+  #    - DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT=true
+  #    - DOCKER_STEPCA_INIT_PASSWORD=supersecret123
+  #    - DEFAULT_CERT_VALIDITY=${DEFAULT_CERT_VALIDITY:-720h}
+  #    - MAX_CERT_VALIDITY=${MAX_CERT_VALIDITY:-2160h}
+  #   volumes:
+  #     - ./infra/step-ca/data:/home/step
 
   keycloak:
     # image: docker.io/bitnami/keycloak:21.1.2-debian-11-r5

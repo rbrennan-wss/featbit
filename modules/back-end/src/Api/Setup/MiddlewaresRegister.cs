@@ -30,6 +30,12 @@ public static class MiddlewaresRegister
                 options.DisplayRequestDuration();
                 options.DocExpansion(DocExpansion.List);
 
+                options.OAuthClientId("featbit");
+                options.OAuthScopes("profile", "openid", "api");
+                options.OAuthScopeSeparator(" ");
+                options.OAuthUsePkce();
+                options.OAuth2RedirectUrl("https://api.featbit.example/swagger/oauth2-redirect.html");
+
                 // build a swagger endpoint for each discovered API version
                 var descriptions = app.DescribeApiVersions();
                 foreach (var description in descriptions)
@@ -81,7 +87,6 @@ public static class MiddlewaresRegister
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseVerifyAccountCreation();
-        
 
         app.MapControllers();
 

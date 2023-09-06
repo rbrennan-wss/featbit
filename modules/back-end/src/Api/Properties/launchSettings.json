@@ -1,10 +1,10 @@
-﻿{
+{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
     "Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "applicationUrl": "https://*:5001;http://*:5000",
+      "applicationUrl": "https://172.25.96.1:5001;http://172.25.96.1:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
