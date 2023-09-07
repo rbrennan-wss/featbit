@@ -17,10 +17,6 @@ using Microsoft.Extensions.Configuration;
 using System.Security.AccessControl;
 using IdentityModel.Client;
 using Microsoft.Extensions.DependencyInjection;
-
-//using Microsoft.Extensions.Options;
-//using Microsoft.OpenApi.Models;
-//using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -108,13 +104,15 @@ public static class ServicesRegister
         // authentication
         var jwtOption = builder.Configuration.GetSection(JwtOptions.Jwt);
         builder.Services.Configure<JwtOptions>(jwtOption);
+
+        var externalAuthOption = builder.Configuration.GetSection(ExternalAuthOptions.ExternalAuth);
+        builder.Services.Configure<ExternalAuthOptions>(externalAuthOption);
+
         builder.Services
             .AddAuthentication(options =>
             {
-                //options.DefaultScheme = Schemes.SchemeSelector;
-                //options.DefaultChallengeScheme = Schemes.SchemeSelector;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = Schemes.SchemeSelector;
+                options.DefaultChallengeScheme = Schemes.SchemeSelector;
             })
             .AddPolicyScheme(Schemes.SchemeSelector, Schemes.SchemeSelector, options =>
             {
@@ -133,32 +131,27 @@ public static class ServicesRegister
                     return Schemes.OpenApi;
                 };
             })
-            //.AddJwtBearer(Schemes.JwtBearer, options =>
-            //{
-            //    options.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        AuthenticationType = Schemes.JwtBearer,
-
-            //        ValidateIssuer = true,
-            //        ValidIssuer = jwtOption["Issuer"],
-
-            //        ValidateAudience = true,
-            //        ValidAudience = jwtOption["Audience"],
-
-            //        ValidateIssuerSigningKey = false,
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOption["Key"]))
-            //    };
-            //})
-            .AddJwtBearer(Schemes.JwtBearer, o =>
+            .AddJwtBearer(Schemes.JwtBearer, options =>
             {
-                var stsDiscoveryEndpoint = $"{builder.Configuration["ExternalAuth:Authority"]}/.well-known/openid-configuration";
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    AuthenticationType = Schemes.JwtBearer,
+
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtOption["Issuer"],
+
+                    ValidateAudience = true,
+                    ValidAudience = jwtOption["Audience"],
+
+                    ValidateIssuerSigningKey = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOption["Key"]))
+                };
+            })
+            .AddJwtBearer(Schemes.External, o =>
+            {
+                var stsDiscoveryEndpoint = $"{externalAuthOption["Authority"]}/.well-known/openid-configuration";
                 var configManager = new ConfigurationManager<OpenIdConnectConfiguration>(stsDiscoveryEndpoint, new OpenIdConnectConfigurationRetriever());
                 var config = Task.Run(configManager.GetConfigurationAsync).Result;
-
-                var mySigningKey = "OD0RpLEYpqU6CmvzisHvUv4XK015gcdn";
-
-                var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(mySigningKey));
-                var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
                 var jwks = config.JsonWebKeySet;
                 var jwk = jwks.Keys.First();
@@ -170,22 +163,18 @@ public static class ServicesRegister
                     AuthenticationType = Schemes.External,
 
                     ValidateIssuer = true,
-                    //ValidIssuer = jwtOption["Issuer"],
                     ValidIssuer = config.Issuer,
                     IssuerSigningKeys = config.SigningKeys,
 
                     ValidateAudience = true,
-                    //ValidAudience = jwtOption["Audience"],
                     ValidAudience = "featbit",
 
                     ValidateIssuerSigningKey = true,
-                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOption["Key"]))
-                    //IssuerSigningKey = signingCredentials.Key
                     IssuerSigningKey = jwk
                 };
 
-                o.MetadataAddress = $"{builder.Configuration["ExternalAuth:Authority"]}/.well-known/openid-configuration";
-                o.Authority = builder.Configuration["ExternalAuth:Authority"];
+                o.MetadataAddress = $"{externalAuthOption["Authority"]}/.well-known/openid-configuration";
+                o.Authority = externalAuthOption["Authority"];
                 o.Audience = "featbit";
             })
             .AddOpenApi(Schemes.OpenApi);
@@ -205,9 +194,9 @@ public static class ServicesRegister
         });
 
         // replace default authorization result handler
-        //var authorizationResultHandler =
-        //    ServiceDescriptor.Singleton<IAuthorizationMiddlewareResultHandler>(new ApiAuthorizationResultHandler());
-        //builder.Services.Replace(authorizationResultHandler);
+        var authorizationResultHandler =
+            ServiceDescriptor.Singleton<IAuthorizationMiddlewareResultHandler>(new ApiAuthorizationResultHandler());
+        builder.Services.Replace(authorizationResultHandler);
 
         return builder;
     }

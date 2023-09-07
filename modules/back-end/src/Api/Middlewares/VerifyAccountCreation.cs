@@ -23,7 +23,8 @@ namespace Api.Middlewares
                 && !string.IsNullOrEmpty(httpContext.Request.Headers[HeaderNames.Authorization]))
             {
                 // TODO: Update claim to correct value
-                identityService.RegisterUserIfDoesNotExist(httpContext.User.Claims.FirstOrDefault(c => c.Value == "email")?.Value);
+                //httpContext.User.Claims.FirstOrDefault(c => c.Type.Contains("emailaddress")).Value
+                identityService.RegisterUserIfDoesNotExist(httpContext.User.Claims.FirstOrDefault(c => c.Type.Contains("emailaddress"))?.Value);
             }
 
             return _next(httpContext);
