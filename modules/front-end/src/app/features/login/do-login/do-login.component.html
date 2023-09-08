@@ -37,6 +37,7 @@
         </nz-form-control>
       </nz-form-item>
       <button type="submit" nz-button nzType="primary" class="submit-btn" [nzLoading]="isLogin" i18n="@@common.login">Login</button>
+      <button type="submit" nz-button nzType="primary" class="oauth-btn" (click)="useOauth($event)" [nzLoading]="isLogin" i18n="@@common.login">Use SSO</button>
     </form>
   </nz-tab>
 </nz-tabset>

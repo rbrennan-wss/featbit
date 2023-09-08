@@ -8,6 +8,10 @@ const routes: Routes = [
     loadChildren: () => import("./features/login/login.module").then(m => m.LoginModule)
   },
   {
+    path: 'oauth-login',
+    loadChildren: () => import("./features/oauth/oauth.module").then(m => m.OAuthModule)
+  },
+  {
     path: 'onboarding',
     canActivate: [authGuard],
     loadChildren: () => import("./features/safe/onboarding/onboarding.module").then(m => m.OnboardingModule),

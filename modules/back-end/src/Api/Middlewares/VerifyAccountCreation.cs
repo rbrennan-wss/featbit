@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
+using MongoDB.Bson;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -19,11 +20,10 @@ namespace Api.Middlewares
 
         public Task Invoke(HttpContext httpContext, IIdentityService identityService, IConfiguration configuration)
         {
+            // Todo: use option type
             if (Convert.ToBoolean(configuration["ExternalAuth:Enabled"])
                 && !string.IsNullOrEmpty(httpContext.Request.Headers[HeaderNames.Authorization]))
             {
-                // TODO: Update claim to correct value
-                //httpContext.User.Claims.FirstOrDefault(c => c.Type.Contains("emailaddress")).Value
                 identityService.RegisterUserIfDoesNotExist(httpContext.User.Claims.FirstOrDefault(c => c.Type.Contains("emailaddress"))?.Value);
             }
 

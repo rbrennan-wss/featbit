@@ -68,4 +68,8 @@ export class DoLoginComponent implements OnInit {
 
     this.message.error($localize `:@@common.login-error:Error occurred, please contact the support.`);
   }
+
+  public async useOauth(event) {
+    await this.router.navigateByUrl('/oauth-login');
+  }
 }
