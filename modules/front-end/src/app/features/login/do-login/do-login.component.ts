@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { phoneNumberOrEmailValidator } from "@utils/form-validators";
 import {IdentityService} from "@services/identity.service";
+import { USE_EXTERNAL_SSO } from '@utils/localstorage-keys';
 
 @Component({
   selector: 'app-do-login',
@@ -70,6 +71,7 @@ export class DoLoginComponent implements OnInit {
   }
 
   public async useOauth(event) {
+    localStorage.setItem(USE_EXTERNAL_SSO, true.toString());
     await this.router.navigateByUrl('/oauth-login');
   }
 }

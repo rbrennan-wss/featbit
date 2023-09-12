@@ -3,6 +3,7 @@ import { getLocalStorageKey } from "./index";
 export const LOGIN_REDIRECT_URL = 'login-redirect-url';
 export const IDENTITY_TOKEN = 'token';
 export const USER_PROFILE = 'auth';
+export const USE_EXTERNAL_SSO = 'use-external-sso';
 
 export function CURRENT_PROJECT(): string {
   return getLocalStorageKey('current-project', false);
