@@ -65,11 +65,12 @@ public static class ServicesRegister
         builder.Services.AddCors(options => options.AddDefaultPolicy(policyBuilder =>
         {
             policyBuilder
-                //.WithOrigins("https://featbit.example")
-                .AllowAnyOrigin()
+                .WithOrigins("https://featbit.example",
+                             "https://api.featbit.example")
+                //.AllowAnyOrigin()
                 .AllowAnyHeader()
-                .AllowAnyMethod();
-                //.AllowCredentials();
+                .AllowAnyMethod()
+                .AllowCredentials();
         }));
 
         var openApiScheme = new OpenApiSecurityScheme
