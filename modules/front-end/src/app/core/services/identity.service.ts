@@ -37,15 +37,20 @@ export class IdentityService {
   }
 
   async doLoginUser(token: string): Promise<void> {
+
+    const useExternalSSO = localStorage.getItem('use-external-sso');
     return new Promise<void>((resolve) => {
-      if (!token) {
+      if (!token && !useExternalSSO) {
         resolve();
         return;
       }
 
       // store identity token
-      localStorage.setItem(IDENTITY_TOKEN, token);
-
+      if (token && !useExternalSSO) {
+        localStorage.setItem(IDENTITY_TOKEN, token);
+      }
+      
+      
       // store user profile
       this.userService.getProfile().subscribe({
         next: async (profile: IResponse) => {

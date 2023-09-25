@@ -29,6 +29,7 @@ public class CurrentUser : ICurrentUser
             System.Security.Claims.Claim claim = null;
             if (_externalAuthOptions.CurrentValue.Enabled)
             {
+                //external ID does not match mongodb generated ID when the user is added on first login. so use external email instead for now
                 claim = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == UserClaims.ExternalId);
             }
             else

@@ -9,6 +9,7 @@ import { IEnvironment, IProject } from "@shared/types";
 import { IdentityService } from "@services/identity.service";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { OrganizationService } from "@services/organization.service";
+import { OAuthClient } from '@features/oauth/oauthClient';
 
 export const authGuard = async (
   route: ActivatedRouteSnapshot,
@@ -18,16 +19,35 @@ export const authGuard = async (
   projectService = inject(ProjectService),
   organizationService = inject(OrganizationService),
   identityService = inject(IdentityService),
-  notification = inject(NzNotificationService)
+  notification = inject(NzNotificationService),
+  oauthClient = inject(OAuthClient)
 ) => {
   const auth = getAuth();
   const url = state.url;
 
+  const useExternalSSO = localStorage.getItem('use-external-sso');
+
   // if no auth token, redirect to login page
-  if (!auth) {
+  if (!auth && !useExternalSSO) {
     localStorage.setItem(LOGIN_REDIRECT_URL, url);
     return router.parseUrl('/login');
   }
+
+  // if (!auth && useExternalSSO) {
+  //   localStorage.setItem(LOGIN_REDIRECT_URL, url);
+  //   return router.parseUrl('/oauth-login');
+  // }
+
+  // if (auth && useExternalSSO)
+  // {
+  //   await oauthClient.handlePageLoad(location.href);
+  // }
+
+  if (useExternalSSO)
+  {
+    await oauthClient.handlePageLoad(location.href);
+  }
+
 
   // set user organizations
   const organization = await organizationService.setUserOrganizations();

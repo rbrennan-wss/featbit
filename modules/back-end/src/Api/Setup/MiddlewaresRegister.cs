@@ -83,8 +83,24 @@ public static class MiddlewaresRegister
             };
         });
 
+        //app.Use((context, next) =>
+        //{
+        //    var authCookieKey = "featbit.example-at";
+        //    //if (context.Request.Headers.TryGetValue("featbit.example-at", out var token))
+        //    //{
+        //    //    context.Request.Headers.Authorization = "Bearer " + token;
+        //    //}
+
+        //    if (context.Request.Cookies.ContainsKey(authCookieKey))
+        //    {
+        //        context.Request.Headers.Authorization = "Bearer " + context.Request.Cookies[authCookieKey];
+        //    }
+        //    return next();
+        //});
+
         // authentication & authorization
         app.UseAuthentication();
+        //app.UseJwtBearerAuthentication();
         app.UseAuthorization();
         app.UseVerifyAccountCreation();
 

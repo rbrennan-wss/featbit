@@ -24,14 +24,26 @@ export class RequestResponseInterceptor implements HttpInterceptor {
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const token = localStorage.getItem(IDENTITY_TOKEN);
-    const currentOrgId = getCurrentOrganization()?.id ?? '';
 
-    const authedReq = request.clone({
-      headers: request.headers
-        .set('Authorization', `Bearer ${token}`)
-        .set('Organization', currentOrgId)
-    });
+    const useExternalSSO = localStorage.getItem('use-external-sso');
+    let authedReq: HttpRequest<any>;
+
+    // bypass for external sso
+    if (useExternalSSO) {
+      authedReq = request.clone({withCredentials: true});
+      // return next.handle(authedReq);
+    } else {
+      const token = localStorage.getItem(IDENTITY_TOKEN);
+      const currentOrgId = getCurrentOrganization()?.id ?? '';
+
+      authedReq = request.clone({
+        headers: request.headers
+          .set('Authorization', `Bearer ${token}`)
+          .set('Organization', currentOrgId)
+      });
+    }
+
+    
 
     return next.handle(authedReq)
       .pipe(

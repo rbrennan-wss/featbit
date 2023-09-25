@@ -1,19 +1,30 @@
+import { Injectable } from "@angular/core";
 import axios, {AxiosRequestConfig, AxiosRequestHeaders, Method} from 'axios';
-import {ErrorHandler} from '../utilities/errorHandler';
-import {RemoteError} from '../utilities/remoteError';
+// import {ErrorHandler} from '../utilities/errorHandler';
+// import {RemoteError} from '../utilities/remoteError';
 import {OAuthConfiguration} from './oauthConfiguration';
+import { OAuthComponent } from "./oauth.component";
+
+import {IdentityService} from "@services/identity.service";
+
 
 /*
  * The entry point for making OAuth calls
  */
+@Injectable({
+    providedIn: 'root'
+  })
 export class OAuthClient {
 
     private readonly configuration: OAuthConfiguration;
     private antiForgeryToken: string | null;
 
-    constructor(configuration: OAuthConfiguration) {
+    // constructor(configuration: OAuthConfiguration) {
+        constructor(
+            private identityService: IdentityService,
+        ) {
 
-        this.configuration = configuration;
+        this.configuration = {oauthAgentBaseUrl: "https://featbit.example/oauth-agent"};
         this.antiForgeryToken = null;
         this.setupCallbacks();
     }
@@ -37,7 +48,10 @@ export class OAuthClient {
         const response = await this.fetch('POST', 'login/end', request);
         if (response && response.csrf) {
             this.antiForgeryToken = response.csrf;
+            await this.identityService.doLoginUser(null);
         }
+
+        
 
         return response;
     }
@@ -64,9 +78,9 @@ export class OAuthClient {
         } catch (remoteError) {
 
             // Report errors if this is not a 401
-            if (!(remoteError instanceof RemoteError)) {
-                throw remoteError;
-            }
+            // if (!(remoteError instanceof RemoteError)) {
+            //     throw remoteError;
+            // }
 
             if (!remoteError.isAccessTokenExpiredError()) {
                 throw remoteError;
@@ -82,7 +96,7 @@ export class OAuthClient {
             } catch (e) {
 
                 // Report retry errors
-                throw ErrorHandler.handleFetchError('OAuth Agent', e);
+                // throw ErrorHandler.handleFetchError('OAuth Agent', e);
             }
         }
     }
@@ -159,8 +173,8 @@ export class OAuthClient {
             return null;
 
         } catch (e) {
-
-            throw ErrorHandler.handleFetchError('OAuth Agent', e);
+            console.log({p: "fetchError", e: e});
+            // throw ErrorHandler.handleFetchError('OAuth Agent', e);
         }
     }
 

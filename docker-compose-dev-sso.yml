@@ -95,7 +95,7 @@ services:
       - PORT=8082
       - CLIENT_ID=featbit
       - CLIENT_SECRET=OD0RpLEYpqU6CmvzisHvUv4XK015gcdn
-      - REDIRECT_URI=https://featbit.example/spa
+      - REDIRECT_URI=https://featbit.example
       - POST_LOGOUT_REDIRECT_URI=https://featbit.example/
       - SCOPE=openid profile email
       - TRUSTED_WEB_ORIGIN=https://featbit.example
@@ -216,9 +216,16 @@ services:
       - "443:443"
     networks:
       - featbit-network
+    environment:
+      NGINX_HTTPS_PORT_NUMBER: 443
+      NGINX_HTTP_PORT_NUMBER: 80
     volumes:
-      - ./infra/nginx/nginx.conf:/opt/bitnami/nginx/conf/nginx.conf 
+      # - ./infra/nginx/nginx.conf:/opt/bitnami/nginx/conf/nginx.conf 
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf 
+      # - ./infra/nginx/nginx.conf:/etc/nginx/conf.d/default.conf 
       - ./modules/oauth-agent/certs/step-ca:/certs
+      - ./infra/nginx/debian.bullseye.ngx_curity_http_oauth_proxy_module_1.23.2.so:/usr/lib/nginx/modules/debian.bullseye.ngx_curity_http_oauth_proxy_module_1.23.2.so
+    # command: tail -F /dev/null
 
 networks:
     featbit-network:
