@@ -62,16 +62,16 @@ public static class ServicesRegister
             });
 
         // cors
-        builder.Services.AddCors(options => options.AddDefaultPolicy(policyBuilder =>
-        {
-            policyBuilder
-                .WithOrigins("https://featbit.example",
-                             "https://api.featbit.example")
-                //.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        }));
+        //builder.Services.AddCors(options => options.AddDefaultPolicy(policyBuilder =>
+        //{
+        //    policyBuilder
+        //        .WithOrigins("https://featbit.example",
+        //                     "https://api.featbit.example")
+        //        //.AllowAnyOrigin()
+        //        .AllowAnyHeader()
+        //        .AllowAnyMethod()
+        //        .AllowCredentials();
+        //}));
 
         var openApiScheme = new OpenApiSecurityScheme
         {
