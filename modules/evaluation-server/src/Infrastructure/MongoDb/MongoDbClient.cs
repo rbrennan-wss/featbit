@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -16,6 +18,9 @@ public class MongoDbClient : IMongoDbClient
 #pragma warning disable 618
         BsonDefaults.GuidRepresentationMode = GuidRepresentationMode.V3;
 #pragma warning restore
+
+        var guidSerializer = new GuidSerializer(GuidRepresentation.Standard);
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
         var value = options.Value;
 
