@@ -17,6 +17,8 @@ public class UpdateSetting : IRequest<bool>
     public bool IsEnabled { get; set; }
 
     public string DisabledVariationId { get; set; }
+
+    public bool InsightsEnabled { get; set; }
 }
 
 public class UpdateSettingValidator : AbstractValidator<UpdateSetting>
@@ -47,7 +49,7 @@ public class UpdateSettingHandler : IRequestHandler<UpdateSetting, bool>
     public async Task<bool> Handle(UpdateSetting request, CancellationToken cancellationToken)
     {
         var flag = await _service.GetAsync(request.EnvId, request.Key);
-        var dataChange = flag.UpdateSetting(request.Name, request.Description, request.IsEnabled, request.DisabledVariationId, _currentUser.Id);
+        var dataChange = flag.UpdateSetting(request.Name, request.Description, request.IsEnabled, request.DisabledVariationId, request.InsightsEnabled, _currentUser.Id);
         await _service.UpdateAsync(flag);
 
         // publish on feature flag change notification

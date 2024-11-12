@@ -42,6 +42,7 @@ export class FeatureFlag implements IFeatureFlag {
   variationType: VariationTypeEnum;
   variations: IVariation[];
   description: string;
+  insightsEnabled;
 }
 
 export interface IFeatureFlag {
@@ -63,7 +64,8 @@ export interface IFeatureFlag {
   updatorId: string,
   createdAt: Date,
   updatedAt: Date,
-  description: string
+  description: string,
+  insightsEnabled: boolean
 }
 
 export interface IFeatureFlagTargeting {
@@ -100,6 +102,7 @@ export interface ISettingPayload {
   description: string;
   isEnabled: boolean;
   disabledVariationId: string;
+  insightsEnabled: boolean;
 }
 
 export function isVariationValueValid(variationType: string, variationValue: string): boolean {

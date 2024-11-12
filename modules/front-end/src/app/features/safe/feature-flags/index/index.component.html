@@ -107,6 +107,7 @@
                        nzControl="true"
                        [ngModel]="featureFlag.isEnabled" nzCheckedChildren="ON" nzUnCheckedChildren="OFF">
             </nz-switch>
+
           </td>
           <td style="max-width: 168px;">
             <span class="tag" *ngFor="let tag of featureFlag.tags">{{tag}}</span>

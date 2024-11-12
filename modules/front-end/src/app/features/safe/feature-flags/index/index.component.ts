@@ -266,6 +266,20 @@ export class IndexComponent implements OnInit {
     });
   }
 
+  onToggleInsightsEnabled(data: IFeatureFlagListItem): void {
+    let msg: string = data.insightsEnabled
+      ? $localize`:@@ff.idx.insights-enabled:Insights for <b>${data.name}</b> will not be collected`
+      : $localize`:@@ff.idx.insights-disabled:Insigts for <b>${data.name}</b> will be collected`;
+
+    this.featureFlagService.toggleStatus(data.key).subscribe({
+      next: _ => {
+        this.msg.success(msg);
+        data.insightsEnabled = !data.insightsEnabled;
+      },
+      error: _ => this.msg.error($localize`:@@ff.idx.insights-enabled-change-failed:Failed to change feature flag insight collection status`)
+    });
+  }
+
   navigateToFlagDetail(key: string) {
     this.router.navigateByUrl(`/feature-flags/${encodeURIComponentFfc(key)}/targeting`).then();
   }

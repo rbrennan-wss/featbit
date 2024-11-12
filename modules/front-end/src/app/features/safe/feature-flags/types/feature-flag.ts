@@ -14,6 +14,7 @@ export interface IFeatureFlagListItem {
   isEnabled: boolean;
   updatedAt: Date;
   variationType: string;
+  insightsEnabled: boolean;
   serves: IVariationOverview,
 
   // UI only
@@ -70,6 +71,7 @@ export interface IFeatureFlagCreationPayload {
   enabledVariationId: string;
   disabledVariationId: string;
   variations: IVariation[];
+  insightsEnabled: boolean;
 }
 
 export const FlagKeyPattern: RegExp = /^[a-zA-Z0-9._-]+$/;

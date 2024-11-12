@@ -38,6 +38,8 @@ public class FeatureFlag : FullAuditedEntity
 
     public bool IsArchived { get; set; }
 
+    public bool InsightsEnabled { get; set; }
+
     public FeatureFlag()
     {
     }
@@ -142,7 +144,7 @@ public class FeatureFlag : FullAuditedEntity
         return dataChange.To(this);
     }
 
-    public DataChange UpdateSetting(string name, string description, bool isEnabled, string disabledVariationId, Guid currentUserId)
+    public DataChange UpdateSetting(string name, string description, bool isEnabled, string disabledVariationId, bool insightsEnabled, Guid currentUserId)
     {
         var dataChange = new DataChange(this);
 
@@ -150,6 +152,7 @@ public class FeatureFlag : FullAuditedEntity
         Description = description;
         IsEnabled = isEnabled;
         DisabledVariationId = disabledVariationId;
+        InsightsEnabled = insightsEnabled;
         MarkAsUpdated(currentUserId);
 
         return dataChange.To(this);

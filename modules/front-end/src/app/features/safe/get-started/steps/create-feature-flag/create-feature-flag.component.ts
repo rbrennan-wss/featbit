@@ -190,7 +190,8 @@ export class CreateFeatureFlagComponent implements OnInit {
         isEnabled: false,
         variations: [{id: truthyVariationId, name: 'True', value: 'true'}, {id: falsyVariationId, name: 'False', value: 'false'}],
         enabledVariationId: truthyVariationId,
-        disabledVariationId: falsyVariationId
+        disabledVariationId: falsyVariationId,
+        insightsEnabled: true
       };
 
       this.featureFlagService.create(payload).subscribe({

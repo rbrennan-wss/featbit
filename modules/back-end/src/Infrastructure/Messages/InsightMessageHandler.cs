@@ -1,5 +1,8 @@
 using System.Text.Json.Nodes;
+using Application.Bases.Exceptions;
+using Domain.FeatureFlags;
 using Domain.Messages;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -18,8 +21,11 @@ public class InsightMessageHandler : IMessageHandler, IDisposable
 
     private readonly ILogger<InsightMessageHandler> _logger;
 
+    private readonly MongoDbClient _mongodb;
+
     public InsightMessageHandler(MongoDbClient mongodb, ILogger<InsightMessageHandler> logger)
     {
+        _mongodb = mongodb;
         _events = mongodb.CollectionOf("Events");
         _eventsBuffer = new List<BsonDocument>();
 
@@ -40,6 +46,22 @@ public class InsightMessageHandler : IMessageHandler, IDisposable
         // Convert properties JSON string to object
         jsonNode["properties"] = JsonNode.Parse(jsonNode["properties"]!.GetValue<string>());
 
+        if (jsonNode["properties"] != null)
+        {
+            var properties = jsonNode["properties"].AsObject();
+            if (properties["envId"] != null && properties["featureFlagKey"] != null)
+            {
+                var envId = Guid.Parse(properties["envId"].GetValue<string>());
+                var flagKey = properties["featureFlagKey"].GetValue<string>();
+                var insightsEnabled = CheckInsightsEnabled(envId, flagKey).Result;
+
+                if (!insightsEnabled)
+                {
+                    return Task.CompletedTask;
+                }
+            }
+        }
+
         // Convert timestamp to UTC DateTime
         var timestampInMilliseconds = jsonNode["timestamp"]!.GetValue<long>() / 1000;
         var timestamp = DateTimeOffset.FromUnixTimeMilliseconds(timestampInMilliseconds).UtcDateTime;
@@ -54,6 +76,39 @@ public class InsightMessageHandler : IMessageHandler, IDisposable
         _eventsBuffer.Add(bsonDocument);
 
         return Task.CompletedTask;
+    }
+
+    private async Task<bool> CheckInsightsEnabled(Guid envId, string flagKey)
+    {
+        if (_mongodb == null)
+        {
+            throw new InvalidOperationException("MongoDbClient is not initialized.");
+        }
+
+        var result = true;
+
+        var collection = _mongodb.CollectionOf("FeatureFlags");
+
+        // Build the filter
+        var filter = Builders<BsonDocument>.Filter.And(
+            Builders<BsonDocument>.Filter.Eq("envId", envId),
+            Builders<BsonDocument>.Filter.Eq("key", flagKey)
+        );
+
+        // Query the collection
+        var flag = await collection.Find(filter).FirstOrDefaultAsync();
+
+        if (flag != null)
+        {
+            BsonValue insightsEnabled;
+            var hasInsightValue = flag.TryGetValue("insightsEnabled", out insightsEnabled);
+            if (hasInsightValue)
+            {
+                result = insightsEnabled.AsBoolean;
+            }
+        }
+        // Return true if the flag is found, otherwise false
+        return result;
     }
 
     private async Task FlushEventsAsync()

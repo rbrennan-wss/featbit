@@ -157,5 +157,6 @@ const testFeatureFlag: IFeatureFlag = {
   updatedAt: new Date(),
   createdAt: new Date('2024-01-01'),
   creatorId: '00000000-0000-0000-0000-000000000000',
-  updatorId: '00000000-0000-0000-0000-000000000000'
+  updatorId: '00000000-0000-0000-0000-000000000000',
+  insightsEnabled: true
 };

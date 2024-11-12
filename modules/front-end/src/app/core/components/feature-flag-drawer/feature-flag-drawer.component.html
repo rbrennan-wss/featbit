@@ -184,6 +184,12 @@
           </nz-select>
         </nz-form-control>
       </nz-form-item>
+      <nz-form-item>
+        <nz-form-label i18n="@@common.insights-enabled">Enable Insights</nz-form-label>
+        <nz-form-control>
+          <nz-switch formControlName="insightsEnabled" nzCheckedChildren="Yes" nzUnCheckedChildren="No"></nz-switch>
+        </nz-form-control>
+      </nz-form-item>
     </form>
 
     <button (click)="doSubmit()" [nzLoading]="creating" nz-button class="submit-btn" [nzType]="'primary'" i18n="@@common.save">Save</button>

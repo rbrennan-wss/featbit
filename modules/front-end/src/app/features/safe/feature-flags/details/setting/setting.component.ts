@@ -150,6 +150,11 @@ export class SettingComponent {
     this.onSaveSettings(() => this.messageQueueService.emit(this.messageQueueService.topics.FLAG_SETTING_CHANGED(this.key)));
   }
 
+  onChangeInsightCollection() {
+    this.featureFlag.insightsEnabled = !this.featureFlag.insightsEnabled;
+    this.onSaveSettings(() => this.messageQueueService.emit(this.messageQueueService.topics.FLAG_SETTING_CHANGED(this.key)));
+  }
+
   onChangeDisabledVariation() {
     this.onSaveSettings(() => this.messageQueueService.emit(this.messageQueueService.topics.FLAG_SETTING_CHANGED(this.key)));
   }
@@ -330,12 +335,13 @@ export class SettingComponent {
   }
 
   onSaveSettings(cb?: Function) {
-    const { name, description, isEnabled, disabledVariationId } = this.featureFlag;
+    const { name, description, isEnabled, disabledVariationId, insightsEnabled } = this.featureFlag;
     const payload: ISettingPayload = {
       name,
       description,
       isEnabled,
       disabledVariationId,
+      insightsEnabled
     };
 
     this.featureFlagService.updateSetting(this.key, payload).subscribe({

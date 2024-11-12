@@ -71,6 +71,11 @@
           </nz-option>
         </nz-select>
       </div>
+      <div class="insight-switcher">
+        <nz-switch *ngIf="featureFlag.insightsEnabled" i18n-nz-popconfirm="@@ff.are-you-sure-to-turn-insight-off" nz-popconfirm="Are you sure you want to disable insight collection? You will not be able to see the insights of this feature flag or perform experiments with it" nzPopconfirmPlacement="bottomRight" [nzPopconfirmOverlayStyle]="{minWidth: '240px'}" (nzOnConfirm)="onChangeInsightCollection()" [ngModel]="featureFlag.insightsEnabled" [nzControl]="true" nzCheckedChildren="ON" nzUnCheckedChildren="OFF"></nz-switch>
+        <nz-switch *ngIf="!featureFlag.insightsEnabled" i18n-nz-popconfirm="@@ff.are-you-sure-to-turn-insight-on" nz-popconfirm="Are you sure you want to enable insight collection? This could create a significant amount of data" nzPopconfirmPlacement="bottomRight" [nzPopconfirmOverlayStyle]="{minWidth: '240px'}" (nzOnConfirm)="onChangeInsightCollection()" [ngModel]="featureFlag.insightsEnabled" [nzControl]="true" nzCheckedChildren="ON" nzUnCheckedChildren="OFF"></nz-switch>
+        <span><ng-container i18n="@@ff.ff-insight-is">Insight collection is</ng-container>&nbsp;<nz-tag *ngIf="featureFlag.insightsEnabled" class="status on">ON</nz-tag><nz-tag *ngIf="!featureFlag.insightsEnabled" class="status off">OFF</nz-tag></span>
+      </div>
     </div>
   </div>
   <div class="block standard-div" *ngIf="!isLoading; else loadingTem;">

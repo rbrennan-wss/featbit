@@ -63,7 +63,8 @@ export class FeatureFlagDrawerComponent implements OnInit {
     this.defaultRuleForm = this.fb.group({
       isEnabled: [false, Validators.required],
       enabledVariationId: ['', Validators.required],
-      disabledVariationId: ['', Validators.required]
+      disabledVariationId: ['', Validators.required],
+      insightsEnabled: [true, Validators.required]
     });
 
     this.variationForm = this.fb.group({
@@ -345,7 +346,7 @@ export class FeatureFlagDrawerComponent implements OnInit {
     this.enableVariations();
 
     const { name, key, description } = this.basicForm.value;
-    const { isEnabled, enabledVariationId, disabledVariationId } = this.defaultRuleForm.value;
+    const { isEnabled, enabledVariationId, disabledVariationId, insightsEnabled } = this.defaultRuleForm.value;
 
     const payload: IFeatureFlagCreationPayload = {
       name,
@@ -356,7 +357,8 @@ export class FeatureFlagDrawerComponent implements OnInit {
       variations: this.variations.value,
       isEnabled,
       enabledVariationId,
-      disabledVariationId
+      disabledVariationId,
+      insightsEnabled
     };
 
     this.featureFlagService.create(payload)
